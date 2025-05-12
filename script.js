@@ -9,12 +9,18 @@ submitButton.disabled = true;
 const downloadButton = document.getElementById('downloadButton');
 downloadButton.disabled = true;
 
-const font = new FontFace("TnT", "url('./fonts/TnT.ttf')");
-font.load().then((loadedFont) => {
-  document.fonts.add(loadedFont);
-  isFontLoaded = true;
-  submitButton.disabled = false;
-});
+/**
+ * @typedef {[name: string, url: string]} FontData
+ * @type {FontData[]}
+ */
+const fontDatas = [["TnT", "./fonts/TnT.ttf"], ["Kukde", "./fonts/Kukde.otf"]];
+Promise.all(fontDatas.map((fontData) => new FontFace(fontData[0], `url('${fontData[1]}')`)
+  .load()
+  .then((loadedFont) => document.fonts.add(loadedFont))))
+  .then(() => {
+    isFontLoaded = true;
+    submitButton.disabled = false;
+  });
 
 const danToggle = document.getElementById('danToggle');
 const danOptions = document.getElementById('danOptions');
@@ -63,7 +69,7 @@ function draw() {
     let titleFontSize = 20;
     if (title.length > 23) titleFontSize = 14;
 
-    ctx.font = `${titleFontSize}px TnT`;
+    ctx.font = `${titleFontSize}px ${fontDatas.map(e => `'${e[0]}'`).join(', ')}`;
     ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
     ctx.fillStyle = '#000';
@@ -82,7 +88,7 @@ function draw() {
       titleX += ctx.measureText(title[i]).width + letterSpacing;
     }
 
-    ctx.font = '25px TnT';
+    ctx.font = `25px ${fontDatas.map(e => `'${e[0]}'`).join(', ')}`;
     ctx.textBaseline = 'middle';
     ctx.textAlign = 'center';
     ctx.lineWidth = 6;
@@ -119,7 +125,7 @@ function draw() {
         const scale = 0.85;
         const danWidth = danImage.width * scale;
         const danHeight = danImage.height * scale;
-        const x = canvas.width - danWidth - 100; 
+        const x = canvas.width - danWidth - 100;
         const y = canvas.height - danHeight - 7.5;
         ctx.drawImage(danImage, x, y, danWidth, danHeight);
         isImageDrawn = true;
