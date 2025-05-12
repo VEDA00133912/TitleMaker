@@ -127,6 +127,7 @@ function draw() {
       };
       danImage.onerror = () => {
         alert('すみません。この段位表示は素材がありません。\n見つかり次第追加します🙇‍♀️');
+        return;
       };
 
       const danImagePath = `./images/dani/${danLevel}/${frameColor}-${passColor}.png`;
@@ -139,6 +140,7 @@ function draw() {
 
   plateImage.onerror = () => {
     alert('プレート画像の読み込みに失敗しました');
+    return;
     isImageDrawn = false;
   };
 
