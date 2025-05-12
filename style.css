@@ -1,0 +1,223 @@
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #111;
+  color: white;
+  font-family: sans-serif;
+  margin: 0;
+  padding: 20px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 400px; 
+}
+
+.form-group {
+  margin: 10px 0;
+  width: 100%; 
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.form-group label {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.form-group input,
+.form-group select {
+  padding: 8px;
+  font-size: 16px;
+  border-radius: 4px;
+  border: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.dan-inline-options select {
+  appearance: auto;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 14px;
+  color: #000;
+  cursor: pointer;
+  width: 100%;
+}
+
+.dan-inline-options {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+  flex-direction: row;
+}
+
+.dan-inline-options .inline-label {
+  margin-right: 10px;
+  font-size: 14px;
+  color: white;
+}
+
+button {
+  margin-top: 10px;
+  padding: 8px 20px;
+  font-size: 16px;
+  border-radius: 4px;
+  border: none;
+  background-color: #333;
+  color: white;
+  cursor: pointer;
+  width: 100%;
+}
+
+#submitButton:disabled {
+  background-color: #333;
+  color: #aaa;
+  cursor: not-allowed;
+}
+
+#submitButton:not(:disabled) {
+  background-color: #007BFF;
+  color: white;
+  cursor: pointer;
+}
+
+#downloadButton {
+  margin-top: 10px;
+  padding: 8px 20px;
+  font-size: 16px;
+  border-radius: 4px;
+  border: none;
+  background-color: #333;
+  color: white;
+  cursor: pointer;
+  width: 100%;
+  max-width: 400px;
+}
+
+#downloadButton:disabled {
+  background-color: #333;
+  color: #aaa;
+  cursor: not-allowed;
+}
+
+#downloadButton:not(:disabled) {
+  background-color: #28a745; 
+  color: white;
+  cursor: pointer;
+}
+
+
+canvas {
+  width: 100%;
+  max-width: 556px;
+  height: auto;
+  border: 1px solid #333;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+#title,
+#name {
+  width: 100%;
+}
+
+.toggle-group {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+  margin-left: 10px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  background-color: #ccc;
+  border-radius: 26px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:checked + .slider:before {
+  transform: translateX(24px);
+}
+
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+
+  .form-group {
+    width: 100%;
+  }
+
+  button {
+    padding: 12px 0;
+  }
+
+  .dan-inline-options {
+    flex-direction: row;
+    gap: 5px;
+  }
+
+  .dan-inline-options select {
+    width: auto;
+  }
+
+  canvas {
+    width: 100%;
+    height: auto;
+  }
+}
+
+@media (min-width: 769px) {
+  .dan-inline-options {
+    flex-direction: row;
+    gap: 10px;
+  }
+
+  .dan-inline-options select {
+    width: auto;
+  }
+}

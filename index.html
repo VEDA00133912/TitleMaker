@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>太鼓の達人 称号メーカー</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Arial&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <h1>称号メーカー</h1>
+
+  <form id="inputForm">
+    <div class="form-group">
+      <label for="title">称号名（30字以内）</label>
+      <input type="text" id="title" maxlength="30" />
+    </div>
+
+    <div class="form-group">
+      <label for="name">プレイヤー名（10字以内）</label>
+      <input type="text" id="name" maxlength="10" />
+    </div>
+
+    <div class="form-group">
+      <label for="type">称号プレート</label>
+      <select id="type">
+        <option value="gold">金称号</option>
+        <option value="rainbow">虹称号</option>
+        <option value="purple">紫称号</option>
+        <option value="ki">木称号</option>
+        <option value="donderful">全良称号(おに)</option>
+        <option value="full">フルコン称号(おに)</option>
+        <option value="clear">クリア称号(おに)</option>
+        <option value="donderful-e">全良称号(裏)</option>
+        <option value="full-e">フルコン称号(裏)</option>
+        <option value="clear-e">クリア称号(裏)</option>
+      </select>
+    </div>
+
+    <div class="form-group toggle-group">
+      <label for="danToggle">段位を表示する</label>
+      <label class="switch">
+        <input type="checkbox" id="danToggle" checked>
+        <span class="slider"></span>
+      </label>
+    </div>
+      
+    <div id="danOptions" class="dan-inline-options">
+      <select id="danLevel">
+        <option value="gokyu">五級</option>
+        <option value="yonkyu">四級</option>
+        <option value="sankyu">三級</option>
+        <option value="nikyu">二級</option>
+        <option value="ikkyu">一級</option>
+        <option value="syodan">初段</option>
+        <option value="nidan">二段</option>
+        <option value="sandan">三段</option>
+        <option value="yodan">四段</option>
+        <option value="godan">五段</option>
+        <option value="rokudan">六段</option>
+        <option value="nanadan">七段</option>
+        <option value="hachidan">八段</option>
+        <option value="kudan">九段</option>
+        <option value="judan">十段</option>
+        <option value="clotho">玄人</option>
+        <option value="meijin">名人</option>
+        <option value="chojin">超人</option>
+        <option value="tatsujin">達人</option>
+      </select>
+
+      <select id="frameColor">
+        <option value="gold">金</option>
+        <option value="silver">銀</option>
+        <option value="rainbow">虹</option>
+      </select>
+      <span class="inline-label">枠</span>
+
+      <select id="passColor">
+        <option value="gold">金</option>
+        <option value="red">赤</option>
+      </select>
+      <span class="inline-label">合格</span>
+    </div>
+
+    <button id="submitButton" type="submit" disabled>生成</button>
+  </form>
+
+  <canvas id="canvas" width="556" height="90"></canvas>
+  <button id="downloadButton">ダウンロード</button>
+
+  <script src="script.js"></script>
+</body>
+</html>
