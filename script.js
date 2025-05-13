@@ -24,9 +24,6 @@ Promise.all(fontDatas.map((fontData) => new FontFace(fontData[0], `url('${fontDa
     submitButton.disabled = false;
   });
 
-const danToggle = document.getElementById('danToggle');
-const danOptions = document.getElementById('danOptions');
-
 danToggle.addEventListener('change', () => {
   danOptions.style.display = danToggle.checked ? 'block' : 'none';
 });
