@@ -76,7 +76,7 @@ function draw() {
     ctx.fillStyle = '#fff';
     ctx.miterLimit = 1;
 
-    const nameY = 90;
+    const nameY = 91.5;
     const textWidth = ctx.measureText(name).width;
     let nameX = showDan ? canvas.width * 0.26 : canvas.width / 2;
 
