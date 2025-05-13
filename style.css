@@ -285,3 +285,12 @@ input:checked + .slider:before {
     right: 20px;
   }
 }
+
+footer {
+  margin-top: auto;
+  padding: 20px;
+  text-align: center;
+  color: white;
+  font-size: 14px;
+  opacity: 0.8;
+}
