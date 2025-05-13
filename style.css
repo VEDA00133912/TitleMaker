@@ -6,7 +6,8 @@ body {
   color: white;
   font-family: sans-serif;
   margin: 0;
-  padding: 20px;
+  padding: 80px 20px 20px;
+  box-sizing: border-box;
 }
 
 @font-face {
@@ -14,12 +15,25 @@ body {
   src: url('./fonts/TnT.ttf') format('truetype');
 }
 
-h1 {
-  font-family: 'TnT', sans-serif;
-  font-size: 48px;
-  color: #000;
-  text-align: center;
+header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: #111;
+  z-index: 1000;
+  box-sizing: border-box;
+}
 
+header h1 {
+  font-family: 'TnT', sans-serif;
+  font-size: 32px;
+  color: #000;
+  margin: 0;
   text-shadow:
     -2px -2px 0 #fff,
      0   -2px 0 #fff,
@@ -35,18 +49,32 @@ h1 {
      1px  1px 0 #fff;
 }
 
+.social-icons {
+  display: flex;
+  gap: 12px;
+}
+
+.social-icons img {
+  width: 30px;
+  height: 30px;
+  transition: opacity 0.3s ease;
+}
+
+.social-icons a:hover img {
+  opacity: 0.7;
+}
 
 form {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
-  max-width: 400px; 
+  max-width: 400px;
 }
 
 .form-group {
   margin: 10px 0;
-  width: 100%; 
+  width: 100%;
   display: flex;
   flex-direction: column;
   text-align: left;
@@ -67,6 +95,15 @@ form {
   box-sizing: border-box;
 }
 
+.dan-inline-options {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+  flex-direction: row;
+}
+
 .dan-inline-options select {
   appearance: auto;
   background-color: #f0f0f0;
@@ -79,34 +116,28 @@ form {
   width: 100%;
 }
 
-.dan-inline-options {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 10px;
-  flex-wrap: wrap;
-  flex-direction: row;
-}
-
 .dan-inline-options .inline-label {
   margin-right: 10px;
   font-size: 14px;
   color: white;
 }
 
-button {
+button,
+#submitButton,
+#downloadButton {
   margin-top: 10px;
   padding: 8px 20px;
   font-size: 16px;
   border-radius: 4px;
   border: none;
-  background-color: #333;
   color: white;
   cursor: pointer;
   width: 100%;
+  max-width: 400px;
 }
 
-#submitButton:disabled {
+#submitButton:disabled,
+#downloadButton:disabled {
   background-color: #333;
   color: #aaa;
   cursor: not-allowed;
@@ -114,35 +145,11 @@ button {
 
 #submitButton:not(:disabled) {
   background-color: #007BFF;
-  color: white;
-  cursor: pointer;
-}
-
-#downloadButton {
-  margin-top: 10px;
-  padding: 8px 20px;
-  font-size: 16px;
-  border-radius: 4px;
-  border: none;
-  background-color: #333;
-  color: white;
-  cursor: pointer;
-  width: 100%;
-  max-width: 400px;
-}
-
-#downloadButton:disabled {
-  background-color: #333;
-  color: #aaa;
-  cursor: not-allowed;
 }
 
 #downloadButton:not(:disabled) {
-  background-color: #28a745; 
-  color: white;
-  cursor: pointer;
+  background-color: #28a745;
 }
-
 
 canvas {
   width: 100%;
@@ -212,7 +219,7 @@ input:checked + .slider:before {
 
 @media (max-width: 768px) {
   body {
-    padding: 10px;
+    padding: 70px 10px 10px;
   }
 
   .form-group {
@@ -236,6 +243,14 @@ input:checked + .slider:before {
     width: 100%;
     height: auto;
   }
+
+  header h1 {
+    font-size: 24px;
+  }
+
+  .social-icons a {
+    font-size: 18px;
+  }
 }
 
 @media (min-width: 769px) {
@@ -257,5 +272,16 @@ input:checked + .slider:before {
   .mobile-break::after {
     content: "\A";
     white-space: pre;
+  }
+}
+
+@media (min-width: 769px) {
+  header {
+    justify-content: center;
+  }
+
+  .social-icons {
+    position: absolute;
+    right: 20px;
   }
 }
