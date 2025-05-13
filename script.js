@@ -11,12 +11,14 @@ let isFontLoaded = false;
 submitButton.disabled = true;
 downloadButton.disabled = true;
 
-const font = new FontFace("TnT", "url('./fonts/TnT.ttf')");
-font.load().then((loadedFont) => {
-  document.fonts.add(loadedFont);
-  isFontLoaded = true;
-  submitButton.disabled = false;
-});
+const fontDatas = [["TnT", "./fonts/TnT.ttf"], ["Kukde", "./fonts/Kukde.otf"]];
+Promise.all(fontDatas.map((fontData) => new FontFace(fontData[0], `url('${fontData[1]}')`)
+  .load()
+  .then((loadedFont) => document.fonts.add(loadedFont))))
+  .then(() => {
+    isFontLoaded = true;
+    submitButton.disabled = false;
+  });
 
 danToggle.addEventListener('change', () => {
   danOptions.style.display = danToggle.checked ? 'block' : 'none';
@@ -53,7 +55,7 @@ function draw() {
     ctx.drawImage(plateImage, 0, y, canvas.width, plateImage.height);
 
     let titleFontSize = title.length > 23 ? 14 : 20;
-    ctx.font = `${titleFontSize}px TnT`;
+    ctx.font = `${titleFontSize}px ${fontDatas.map(e => `'${e[0]}'`).join(', ')}`;
     ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
     ctx.fillStyle = '#000';
@@ -68,7 +70,7 @@ function draw() {
       titleX += ctx.measureText(char).width + letterSpacing;
     }
 
-    ctx.font = '25px TnT';
+    ctx.font = `25px ${fontDatas.map(e => `'${e[0]}'`).join(', ')}`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.lineWidth = 6;
