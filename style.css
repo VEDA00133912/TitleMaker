@@ -9,6 +9,33 @@ body {
   padding: 20px;
 }
 
+@font-face {
+  font-family: 'TnT';
+  src: url('./fonts/TnT.ttf') format('truetype');
+}
+
+h1 {
+  font-family: 'TnT', sans-serif;
+  font-size: 48px;
+  color: #000;
+  text-align: center;
+
+  text-shadow:
+    -2px -2px 0 #fff,
+     0   -2px 0 #fff,
+     2px -2px 0 #fff,
+    -2px  0   0 #fff,
+     2px  0   0 #fff,
+    -2px  2px 0 #fff,
+     0    2px 0 #fff,
+     2px  2px 0 #fff,
+    -1px -1px 0 #fff,
+     1px -1px 0 #fff,
+    -1px  1px 0 #fff,
+     1px  1px 0 #fff;
+}
+
+
 form {
   display: flex;
   flex-direction: column;
@@ -219,5 +246,16 @@ input:checked + .slider:before {
 
   .dan-inline-options select {
     width: auto;
+  }
+}
+
+.mobile-break::after {
+  content: "";
+}
+
+@media (max-width: 600px) {
+  .mobile-break::after {
+    content: "\A";
+    white-space: pre;
   }
 }
