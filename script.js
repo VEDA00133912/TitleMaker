@@ -66,9 +66,7 @@ function draw() {
     const y = canvas.height - plateImage.height;
     ctx.drawImage(plateImage, 0, y, canvas.width, plateImage.height);
 
-    let titleFontSize = 20;
-    if (title.length > 23) titleFontSize = 14;
-
+    let titleFontSize = title.length > 23 ? 14 : 20;
     ctx.font = `${titleFontSize}px ${fontDatas.map(e => `'${e[0]}'`).join(', ')}`;
     ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
@@ -89,8 +87,8 @@ function draw() {
     }
 
     ctx.font = `25px ${fontDatas.map(e => `'${e[0]}'`).join(', ')}`;
-    ctx.textBaseline = 'middle';
     ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
     ctx.lineWidth = 6;
     ctx.strokeStyle = '#000';
     ctx.fillStyle = '#fff';
