@@ -11,8 +11,8 @@ body {
 }
 
 @font-face {
-  font-family: 'TnT';
-  src: url('./fonts/TnT.ttf') format('truetype');
+  font-family: 'FOT';
+  src: url('./fonts/fot.otf') format('truetype');
 }
 
 header {
@@ -30,7 +30,7 @@ header {
 }
 
 header h1 {
-  font-family: 'TnT', sans-serif;
+  font-family: 'FOT', sans-serif;
   font-size: 32px;
   color: #000;
   margin: 0;
