@@ -11,7 +11,7 @@ let isFontLoaded = false;
 submitButton.disabled = true;
 downloadButton.disabled = true;
 
-const fontDatas = [["FOT", "./fonts/fot.otf"], ["Kukde", "./fonts/Kukde.otf"], ["Russia", "./fonts/EBG.otf"]];
+const fontDatas = [["FOT", "./fonts/fot.otf"], ["Kukde", "./fonts/Kukde.otf"], ["Russia", "./fonts/EBG.ttf"]];
 Promise.all(fontDatas.map((fontData) => new FontFace(fontData[0], `url('${fontData[1]}')`)
   .load()
   .then((loadedFont) => document.fonts.add(loadedFont))))
