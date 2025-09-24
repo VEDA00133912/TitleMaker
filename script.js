@@ -4,40 +4,59 @@ const submitButton = document.getElementById('submitButton');
 const downloadButton = document.getElementById('downloadButton');
 const danToggle = document.getElementById('danToggle');
 const danOptions = document.getElementById('danOptions');
+const form = document.getElementById('inputForm');
+
+const CANVAS_WIDTH = 556;
+const CANVAS_HEIGHT = 117;
+const TITLE_MAX_FONT = 25;
+const TITLE_MIN_FONT = 14;
+const DEFAULT_TITLE_MAX_WIDTH = 475;
+const SPECIAL_TITLE_MAX_WIDTH = 440; // clear/full/donderful用（おにマークに被らない範囲で指定してます）
+const PLAYER_NAME_FONT = 25;
+
+const FONT_DATAS = [
+  ["FOT", "./fonts/fot.otf"], // AC版(ニジイロ)のフォント
+  ["Kukde", "./fonts/Kukde.otf"], // 韓国語フォント
+  ["Russia", "./fonts/EBG.ttf"] // ロシア語フォント
+];
 
 let isImageDrawn = false;
 let isFontLoaded = false;
 
+canvas.width = CANVAS_WIDTH;
+canvas.height = CANVAS_HEIGHT;
 submitButton.disabled = true;
 downloadButton.disabled = true;
 
-const fontDatas = [["FOT", "./fonts/fot.otf"], ["Kukde", "./fonts/Kukde.otf"], ["Russia", "./fonts/EBG.ttf"]];
-Promise.all(fontDatas.map((fontData) => new FontFace(fontData[0], `url('${fontData[1]}')`)
-  .load()
-  .then((loadedFont) => document.fonts.add(loadedFont))))
-  .then(() => {
-    isFontLoaded = true;
-    submitButton.disabled = false;
-  });
+// フォントの読み込み
+Promise.all(
+  FONT_DATAS.map(([name, path]) =>
+    new FontFace(name, `url('${path}')`).load().then(f => document.fonts.add(f))
+  )
+).then(() => {
+  isFontLoaded = true;
+  submitButton.disabled = false;
+});
 
+// イベント
 danToggle.addEventListener('change', () => {
   danOptions.style.display = danToggle.checked ? 'block' : 'none';
 });
 
-document.getElementById('inputForm').addEventListener('submit', (e) => {
+form.addEventListener('submit', e => {
   e.preventDefault();
-  if (!isFontLoaded) {
-    alert('フォントを読込中です。少しお待ちください');
-    return;
-  }
-  draw();
+  if (!isFontLoaded) return alert('フォント読込中です。少々お待ちください');
+  drawPlate();
 });
 
-function draw() {
+downloadButton.addEventListener('click', handleDownload);
+
+// 描画処理
+function drawPlate() {
   const title = document.getElementById('title').value.trim();
   const name = document.getElementById('name').value.trim();
-  const showDan = danToggle.checked;
   const type = document.getElementById('type').value;
+  const showDan = danToggle.checked;
 
   if (!title) return alert('称号名を入力してください');
   if (!name) return alert('プレイヤー名を入力してください');
@@ -49,100 +68,111 @@ function draw() {
   const plateImage = new Image();
   plateImage.onload = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    canvas.height = 117;
+    ctx.drawImage(plateImage, 0, CANVAS_HEIGHT - plateImage.height, CANVAS_WIDTH, plateImage.height);
 
-    const y = canvas.height - plateImage.height;
-    ctx.drawImage(plateImage, 0, y, canvas.width, plateImage.height);
-
-    let titleFontSize = title.length > 23 ? 14 : 20;
-    ctx.font = `${titleFontSize}px ${fontDatas.map(e => `'${e[0]}'`).join(', ')}`;
-    ctx.textAlign = 'left';
-    ctx.textBaseline = 'middle';
-    ctx.fillStyle = '#000';
-
-    const letterSpacing = 1;
-    let titleWidth = [...title].reduce((acc, char) => acc + ctx.measureText(char).width + letterSpacing, 0);
-    let titleX = (canvas.width - titleWidth + letterSpacing) / 2;
-    const titleY = 50;
-
-    for (const char of title) {
-      ctx.fillText(char, titleX, titleY);
-      titleX += ctx.measureText(char).width + letterSpacing;
-    }
-
-    ctx.font = `25px ${fontDatas.map(e => `'${e[0]}'`).join(', ')}`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.lineWidth = 6;
-    ctx.strokeStyle = '#000';
-    ctx.fillStyle = '#fff';
-    ctx.miterLimit = 1;
-
-    const nameY = 91.5;
-    const textWidth = ctx.measureText(name).width;
-    let nameX = showDan ? canvas.width * 0.26 : canvas.width / 2;
+    drawTitle(title, type);
+    drawPlayerName(name, showDan);
 
     if (showDan) {
-      const maxWidth = canvas.width / 2 - 20;
-      if (textWidth > maxWidth) {
-        nameX -= (textWidth - maxWidth) / 2;
-      }
-    }
-
-    ctx.strokeText(name, nameX, nameY);
-    ctx.fillText(name, nameX, nameY);
-
-    if (showDan) {
-      const danLevel = document.getElementById('danLevel').value;
-      const frameColor = document.getElementById('frameColor').value;
-      const passColor = document.getElementById('passColor').value;
-
-      const danImage = new Image();
-      danImage.onload = () => {
-        const scale = 0.85;
-        const danWidth = danImage.width * scale;
-        const danHeight = danImage.height * scale;
-        const x = canvas.width - danWidth - 100;
-        const y = canvas.height - danHeight - 7.5;
-        ctx.drawImage(danImage, x, y, danWidth, danHeight);
-        isImageDrawn = true;
-        downloadButton.disabled = false;
-      };
-      danImage.onerror = () => {
-        alert('すみません。この段位表示は素材がありません。\n見つかり次第追加します🙇‍♀️');
-        isImageDrawn = false;
-        downloadButton.disabled = true;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-      };
-
-      danImage.src = `./images/dani/${danLevel}/${frameColor}-${passColor}.png`;
+      drawDanImage();
     } else {
-      isImageDrawn = true;
-      downloadButton.disabled = false;
+      enableDownload();
     }
   };
-
-  plateImage.onerror = () => {
-    alert('プレート画像の読み込みに失敗しました');
-    isImageDrawn = false;
-    downloadButton.disabled = true;
-  };
-
+  plateImage.onerror = () => handleError('プレート画像の読み込みに失敗しました');
   plateImage.src = platePath;
 }
 
-downloadButton.addEventListener('click', () => {
-  if (!isImageDrawn) {
-    alert('称号が生成されていません');
-    return;
+function drawTitle(title, type) {
+  let fontSize = TITLE_MAX_FONT;
+  const maxWidth = (
+    type.startsWith("clear") ||
+    type.startsWith("full") ||
+    type.startsWith("donderful")
+  ) ? SPECIAL_TITLE_MAX_WIDTH : DEFAULT_TITLE_MAX_WIDTH;
+  ctx.font = `${fontSize}px ${getFontStack()}`;
+  console.log(maxWidth)
+  // 既定値におさまるように自動縮小
+  while (ctx.measureText(title).width > maxWidth && fontSize > TITLE_MIN_FONT) {
+    fontSize--;
+    ctx.font = `${fontSize}px ${getFontStack()}`;
   }
+
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillStyle = "#000";
+  ctx.fillText(title, CANVAS_WIDTH / 2, 50);
+  ctx.miterLimit = 1;
+}
+
+function drawPlayerName(name, showDan) {
+  ctx.font = `${PLAYER_NAME_FONT}px ${getFontStack()}`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.lineWidth = 6;
+  ctx.strokeStyle = '#000';
+  ctx.fillStyle = '#fff';
+  ctx.miterLimit = 1;
+
+  const textWidth = ctx.measureText(name).width;
+  const y = 91.5;
+  let x = showDan ? CANVAS_WIDTH * 0.26 : CANVAS_WIDTH / 2;
+
+  if (showDan) {
+    const maxWidth = CANVAS_WIDTH / 2 - 20;
+    if (textWidth > maxWidth) x -= (textWidth - maxWidth) / 2;
+  }
+
+  ctx.strokeText(name, x, y);
+  ctx.fillText(name, x, y);
+}
+
+function drawDanImage() {
+  const danLevel = document.getElementById('danLevel').value;
+  const frameColor = document.getElementById('frameColor').value;
+  const passColor = document.getElementById('passColor').value;
+
+  const danImage = new Image();
+  danImage.onload = () => {
+    const scale = 0.85;
+    const w = danImage.width * scale;
+    const h = danImage.height * scale;
+    const x = CANVAS_WIDTH - w - 100;
+    const y = CANVAS_HEIGHT - h - 7.5;
+    ctx.drawImage(danImage, x, y, w, h);
+    enableDownload();
+  };
+  danImage.onerror = () =>
+    handleError('この段位表示は素材がありません。見つかり次第追加します🙇‍♀️');
+  danImage.src = `./images/dani/${danLevel}/${frameColor}-${passColor}.png`;
+}
+
+// ユーティリティ関数
+function getFontStack() {
+  return FONT_DATAS.map(([name]) => `'${name}'`).join(', ');
+}
+
+function enableDownload() {
+  isImageDrawn = true;
+  downloadButton.disabled = false;
+}
+
+function handleError(msg) {
+  alert(msg);
+  isImageDrawn = false;
+  downloadButton.disabled = true;
+  ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+}
+
+function handleDownload() {
+  if (!isImageDrawn) return alert('称号が生成されていません');
   try {
     const link = document.createElement('a');
     link.download = 'nameplate.png';
     link.href = canvas.toDataURL();
     link.click();
   } catch (e) {
-    alert('画像のダウンロードに失敗しました。もう一度お試しください');
+    alert('画像のダウンロードに失敗しました');
     console.error('ダウンロード失敗:', e);
   }
-});
+}
