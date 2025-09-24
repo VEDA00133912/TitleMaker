@@ -10,12 +10,12 @@ const CANVAS_WIDTH = 556;
 const CANVAS_HEIGHT = 117;
 const TITLE_MAX_FONT = 25;
 const TITLE_MIN_FONT = 14;
-const DEFAULT_TITLE_MAX_WIDTH = 475;
-const SPECIAL_TITLE_MAX_WIDTH = 440; // clear/full/donderful用（おにマークに被らない範囲で指定してます）
+const TITLE_MAX_WIDTH = 440; // クリア/フルコン/全良称号のおにマークに被らないくらいの範囲で指定してる
 const PLAYER_NAME_FONT = 25;
 
 const FONT_DATAS = [
   ["FOT", "./fonts/fot.otf"], // AC版(ニジイロ)のフォント
+  ["GW", "./fonts/GW.ttf"], // 中国語フォント(繁体字の場合はHK.ttfのほうがACに近い)
   ["Kukde", "./fonts/Kukde.otf"], // 韓国語フォント
   ["Russia", "./fonts/EBG.ttf"] // ロシア語フォント
 ];
@@ -51,6 +51,22 @@ form.addEventListener('submit', e => {
 
 downloadButton.addEventListener('click', handleDownload);
 
+function detectFont(text) {
+  const hiraganaRegex = /[\u3040-\u309F]/;
+  const katakanaRegex = /[\u30A0-\u30FF]/;
+  const kanjiRegex = /[\u4E00-\u9FFF]/;
+
+  if (hiraganaRegex.test(text) || katakanaRegex.test(text)) {
+    return "FOT";
+  }
+
+  if (kanjiRegex.test(text)) {
+    return "GW";
+  }
+
+  return "FOT";
+}
+
 // 描画処理
 function drawPlate() {
   const title = document.getElementById('title').value.trim();
@@ -70,7 +86,7 @@ function drawPlate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(plateImage, 0, CANVAS_HEIGHT - plateImage.height, CANVAS_WIDTH, plateImage.height);
 
-    drawTitle(title, type);
+    drawTitle(title);
     drawPlayerName(name, showDan);
 
     if (showDan) {
@@ -83,19 +99,14 @@ function drawPlate() {
   plateImage.src = platePath;
 }
 
-function drawTitle(title, type) {
+function drawTitle(title) {
   let fontSize = TITLE_MAX_FONT;
-  const maxWidth = (
-    type.startsWith("clear") ||
-    type.startsWith("full") ||
-    type.startsWith("donderful")
-  ) ? SPECIAL_TITLE_MAX_WIDTH : DEFAULT_TITLE_MAX_WIDTH;
-  ctx.font = `${fontSize}px ${getFontStack()}`;
-  console.log(maxWidth)
+  ctx.font = `${fontSize}px '${detectFont(title)}'`;
+
   // 既定値におさまるように自動縮小
-  while (ctx.measureText(title).width > maxWidth && fontSize > TITLE_MIN_FONT) {
+  while (ctx.measureText(title).width > TITLE_MAX_WIDTH && fontSize > TITLE_MIN_FONT) {
     fontSize--;
-    ctx.font = `${fontSize}px ${getFontStack()}`;
+    ctx.font = `${fontSize}px '${detectFont(title)}'`;
   }
 
   ctx.textAlign = "center";
@@ -106,7 +117,7 @@ function drawTitle(title, type) {
 }
 
 function drawPlayerName(name, showDan) {
-  ctx.font = `${PLAYER_NAME_FONT}px ${getFontStack()}`;
+  ctx.font = `${PLAYER_NAME_FONT}px '${detectFont(name)}'`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.lineWidth = 6;
