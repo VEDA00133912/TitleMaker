@@ -15,7 +15,7 @@ const PLAYER_NAME_FONT = 25;
 
 const FONT_DATAS = [
   ["FOT", "./fonts/fot.otf"], // AC版(ニジイロ)のフォント
-  ["GW", "./fonts/GW.ttf"], // 中国語フォント(繁体字の場合はHK.ttfのほうがACに近い)
+  ["GW", "./fonts/GW.ttf"], // 中国語フォント(繁体字の場合はHK.ttfのほうがACに近いんだけどね)
   ["Kukde", "./fonts/Kukde.otf"], // 韓国語フォント
   ["Russia", "./fonts/EBG.ttf"] // ロシア語フォント
 ];
@@ -51,22 +51,6 @@ form.addEventListener('submit', e => {
 
 downloadButton.addEventListener('click', handleDownload);
 
-function detectFont(text) {
-  const hiraganaRegex = /[\u3040-\u309F]/;
-  const katakanaRegex = /[\u30A0-\u30FF]/;
-  const kanjiRegex = /[\u4E00-\u9FFF]/;
-
-  if (hiraganaRegex.test(text) || katakanaRegex.test(text)) {
-    return "FOT";
-  }
-
-  if (kanjiRegex.test(text)) {
-    return "GW";
-  }
-
-  return "FOT";
-}
-
 // 描画処理
 function drawPlate() {
   const title = document.getElementById('title').value.trim();
@@ -101,12 +85,11 @@ function drawPlate() {
 
 function drawTitle(title) {
   let fontSize = TITLE_MAX_FONT;
-  ctx.font = `${fontSize}px '${detectFont(title)}'`;
+  ctx.font = `${fontSize}px ${getFontStack()}`;
 
-  // 既定値におさまるように自動縮小
   while (ctx.measureText(title).width > TITLE_MAX_WIDTH && fontSize > TITLE_MIN_FONT) {
     fontSize--;
-    ctx.font = `${fontSize}px '${detectFont(title)}'`;
+    ctx.font = `${fontSize}px ${getFontStack()}`;
   }
 
   ctx.textAlign = "center";
@@ -117,7 +100,7 @@ function drawTitle(title) {
 }
 
 function drawPlayerName(name, showDan) {
-  ctx.font = `${PLAYER_NAME_FONT}px '${detectFont(name)}'`;
+  ctx.font = `${PLAYER_NAME_FONT}px ${getFontStack()}`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.lineWidth = 6;
