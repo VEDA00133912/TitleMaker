@@ -5,19 +5,20 @@ const downloadButton = document.getElementById('downloadButton');
 const danToggle = document.getElementById('danToggle');
 const danOptions = document.getElementById('danOptions');
 const form = document.getElementById('inputForm');
+const loadingModal = document.getElementById('loadingModal');
 
 const CANVAS_WIDTH = 556;
 const CANVAS_HEIGHT = 117;
-const TITLE_MAX_FONT = 25;
+const TITLE_MAX_FONT = 22;
 const TITLE_MIN_FONT = 14;
-const TITLE_MAX_WIDTH = 440; // クリア/フルコン/全良称号のおにマークに被らないくらいの範囲で指定してる
+const TITLE_MAX_WIDTH = 440;
 const PLAYER_NAME_FONT = 25;
 
 const FONT_DATAS = [
-  ["FOT", "./fonts/fot.otf"], // AC版(ニジイロ)のフォント
-  ["GW", "./fonts/GW.ttf"], // 中国語フォント(繁体字の場合はHK.ttfのほうがACに近いんだけどね)
-  ["Kukde", "./fonts/Kukde.otf"], // 韓国語フォント
-  ["Russia", "./fonts/EBG.ttf"] // ロシア語フォント
+  ["FOT", "./fonts/fot.otf"],
+  ["GW", "./fonts/GW.ttf"],
+  ["Kukde", "./fonts/Kukde.otf"],
+  ["Russia", "./fonts/EBG.ttf"]
 ];
 
 let isImageDrawn = false;
@@ -27,28 +28,60 @@ canvas.width = CANVAS_WIDTH;
 canvas.height = CANVAS_HEIGHT;
 submitButton.disabled = true;
 downloadButton.disabled = true;
+loadingModal.style.display = 'flex'; // モーダル表示
 
-// フォントの読み込み
-Promise.all(
+const loadFonts = Promise.all(
   FONT_DATAS.map(([name, path]) =>
     new FontFace(name, `url('${path}')`).load().then(f => document.fonts.add(f))
   )
-).then(() => {
-  isFontLoaded = true;
-  submitButton.disabled = false;
-});
+);
 
-// イベント
+const minDelay = new Promise(resolve => setTimeout(resolve, 2000));
+
+Promise.all([loadFonts, minDelay])
+  .then(() => {
+    isFontLoaded = true;
+    submitButton.disabled = false;
+    loadingModal.style.display = 'none';
+  })
+  .catch(() => {
+    loadingModal.style.display = 'none';
+    alert('フォントの読み込みに失敗しました');
+  });
+
+
+
+// 段位トグル
 danToggle.addEventListener('change', () => {
   danOptions.style.display = danToggle.checked ? 'block' : 'none';
+  if (isFontLoaded) debounceDraw();
 });
 
+// debounce関数
+function debounce(func, wait = 100) {
+  let timeout;
+  return function (...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(this, args), wait);
+  };
+}
+
+const debounceDraw = debounce(() => {
+  if (isFontLoaded) drawPlate();
+}, 100);
+
+['title', 'name', 'type', 'danLevel', 'frameColor', 'passColor'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', debounceDraw);
+});
+
+// submitボタンは押しても描画（必要なら残す）
 form.addEventListener('submit', e => {
   e.preventDefault();
-  if (!isFontLoaded) return alert('フォント読込中です。少々お待ちください');
-  drawPlate();
+  if (isFontLoaded) drawPlate();
 });
 
+// ダウンロードボタン
 downloadButton.addEventListener('click', handleDownload);
 
 // 描画処理
@@ -58,8 +91,11 @@ function drawPlate() {
   const type = document.getElementById('type').value;
   const showDan = danToggle.checked;
 
-  if (!title) return alert('称号名を入力してください');
-  if (!name) return alert('プレイヤー名を入力してください');
+  if (!title || !name) {
+    ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    downloadButton.disabled = true;
+    return;
+  }
 
   const platePath = showDan
     ? `./images/plate/dan/${type}.png`
